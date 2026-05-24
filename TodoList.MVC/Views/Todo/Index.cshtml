@@ -1,0 +1,234 @@
+@model TodoListViewModel
+
+@{
+    ViewData["Title"] = "My Todos";
+
+    var filter = Model.Filter ?? "all";
+    var currentPage = Model.PagedResult.PageNumber;
+    var totalPages = Model.PagedResult.TotalPages;
+}
+
+<!-- Header -->
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
+    <div>
+        <h2 class="fw-bold display-6">
+            <i class="bi bi-check2-square text-primary me-2"></i>My Todos
+        </h2>
+        <p class="text-muted mb-0">Manage your tasks efficiently</p>
+    </div>
+
+    <a asp-action="Create" class="btn btn-primary rounded-pill px-4">
+        <i class="bi bi-plus-lg me-1"></i>Add Todo
+    </a>
+</div>
+
+<!-- Stats -->
+<div class="row g-3 mb-4">
+
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small">Total</div>
+                    <div class="fs-2 fw-bold text-primary">@Model.TotalAll</div>
+                </div>
+                <i class="bi bi-list-task fs-2 text-primary"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small">Completed</div>
+                    <div class="fs-2 fw-bold text-success">@Model.TotalCompleted</div>
+                </div>
+                <i class="bi bi-check-circle-fill fs-2 text-success"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small">Pending</div>
+                    <div class="fs-2 fw-bold text-warning">@Model.TotalPending</div>
+                </div>
+                <i class="bi bi-hourglass-split fs-2 text-warning"></i>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Search / Filter -->
+<div class="card shadow-sm border-0 rounded-4 mb-4">
+    <div class="card-body">
+
+        <form asp-action="Index" method="get" class="row g-3">
+
+            <div class="col-md-6">
+                <input type="text"
+                       name="SearchTerm"
+                       value="@Model.SearchTerm"
+                       class="form-control"
+                       placeholder="Search todos..." />
+            </div>
+
+            <div class="col-md-4">
+                <select name="filter" class="form-select">
+                    <option value="all" selected="@(filter=="all")">All</option>
+                    <option value="pending" selected="@(filter=="pending")">Pending</option>
+                    <option value="completed" selected="@(filter=="completed")">Completed</option>
+                </select>
+            </div>
+
+            <div class="col-md-2 d-grid">
+                <button class="btn btn-primary">
+                    <i class="bi bi-search me-1"></i>Apply
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<!-- Table -->
+<div class="card shadow-sm border-0 rounded-4">
+    <div class="card-body p-0">
+
+        @if (!Model.PagedResult.Items.Any())
+        {
+            <div class="text-center py-5 text-muted">
+                <i class="bi bi-inbox fs-1"></i>
+                <p class="mt-2">No todos found</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+
+                    <thead class="table-light">
+                        <tr>
+                            <th></th>
+                            <th>Title</th>
+                            <th>Priority</th>
+                            <th class="d-none d-md-table-cell">Due</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    @foreach (var todo in Model.PagedResult.Items)
+                    {
+                        <tr class="@(todo.IsCompleted ? "table-success" : "")">
+
+                            <!-- Toggle -->
+                            <td>
+                                <form asp-action="ToggleCompleted"
+                                      asp-route-id="@todo.Id"
+                                      method="post">
+                                    @Html.AntiForgeryToken()
+
+                                    <button class="btn btn-sm p-0 border-0 bg-transparent">
+                                        <i class="bi @(todo.IsCompleted ? "bi-check-circle-fill text-success" : "bi-circle text-muted") fs-5"></i>
+                                    </button>
+                                </form>
+                            </td>
+
+                            <!-- Title -->
+                            <td>
+                                <a asp-action="Details"
+                                   asp-route-id="@todo.Id"
+                                   class="text-decoration-none @(todo.IsCompleted ? "text-muted text-decoration-line-through" : "")">
+
+                                    @todo.Title
+                                </a>
+
+                                <div class="text-muted small">
+                                    @todo.ShortDescription
+                                </div>
+                            </td>
+
+                            <!-- Priority -->
+                            <td>
+                                <span class="@todo.PriorityBadgeClass">
+                                    @todo.Priority
+                                </span>
+                            </td>
+
+                            <!-- Due -->
+                            <td class="d-none d-md-table-cell">
+                                @(todo.DueDate?.ToString("MMM dd, yyyy") ?? "_")
+                            </td>
+
+                            <!-- Actions -->
+                            <td class="text-end">
+
+                                <a asp-action="Edit"
+                                   asp-route-id="@todo.Id"
+                                   class="btn btn-sm btn-outline-primary">
+                                    Edit
+                                </a>
+
+                                <button class="btn btn-sm btn-outline-danger"
+                                        onclick="confirmDelete(@todo.Id, '@todo.Title')">
+                                    Delete
+                                </button>
+
+                            </td>
+
+                        </tr>
+                    }
+                    </tbody>
+
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="p-3 border-top d-flex justify-content-between align-items-center">
+
+                <small class="text-muted">
+                    Page @currentPage of @totalPages
+                </small>
+
+                <div>
+
+                    <a asp-action="Index"
+                       asp-route-PageNumber="@(currentPage - 1)"
+                       class="btn btn-sm btn-outline-secondary @(currentPage <= 1 ? "disabled" : "")">
+                        Prev
+                    </a>
+
+                    <a asp-action="Index"
+                       asp-route-PageNumber="@(currentPage + 1)"
+                       class="btn btn-sm btn-outline-secondary @(currentPage >= totalPages ? "disabled" : "")">
+                        Next
+                    </a>
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+</div>
+
+<!-- Delete Script -->
+<script>
+    function confirmDelete(id, title) {
+        if (confirm("Delete: " + title + " ?")) {
+            fetch('/Todo/Delete/' + id, {
+                method: 'POST',
+                headers: {
+                    'RequestVerificationToken':
+                        document.querySelector('input[name="__RequestVerificationToken"]').value
+                }
+            }).then(() => location.reload());
+        }
+    }
+</script>

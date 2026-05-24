@@ -1,0 +1,13 @@
+global using AutoMapper;
+global using TodoList.BLL.DTOs.AuthDto;
+global using TodoList.DAL.Entities;
+global using TodoList.Shared.Helpers;
+global using Microsoft.Extensions.DependencyInjection;
+global using System.ComponentModel.DataAnnotations;
+global using TodoList.Shared.Enums;
+global using TodoList.DAL.Repository.Interface;
+global using Microsoft.AspNetCore.Identity;
+global using TodoList.BLL.Services.Implementation;
+global using TodoList.BLL.Services.Interface;
+global using TodoList.BLL.DTOs.ToDoDto;
+global using TodoList.BLL.Mapping;

@@ -1,0 +1,183 @@
+@model RegisterViewModel
+
+@{
+    ViewData["Title"] = "Create Account";
+    Layout = "_AuthLayout";
+}
+
+<div class="auth-card">
+
+    <!-- Header -->
+    <div class="auth-header">
+
+        <div class="auth-icon">
+            <i class="bi bi-card-checklist"></i>
+        </div>
+
+        <h1 class="auth-title">Create Account</h1>
+
+        <p class="auth-subtitle">
+            Start organizing your tasks today
+        </p>
+
+    </div>
+
+    <!-- Form -->
+    <form asp-action="Register"
+          asp-route-returnUrl="@ViewData["ReturnUrl"]"
+          method="post"
+          novalidate>
+
+        @Html.AntiForgeryToken()
+
+        <!-- Validation -->
+        <div asp-validation-summary="ModelOnly"
+             class="text-danger small mb-3">
+        </div>
+
+        <!-- First Name -->
+        <div class="form-floating mb-3">
+
+            <input asp-for="FirstName"
+                   class="form-control"
+                   placeholder="First Name"
+                   autocomplete="given-name"
+                   autofocus />
+
+            <label asp-for="FirstName"></label>
+
+            <span asp-validation-for="FirstName"
+                  class="text-danger small">
+            </span>
+
+        </div>
+
+        <!-- Last Name -->
+        <div class="form-floating mb-3">
+
+            <input asp-for="LastName"
+                   class="form-control"
+                   placeholder="Last Name"
+                   autocomplete="family-name" />
+
+            <label asp-for="LastName"></label>
+
+            <span asp-validation-for="LastName"
+                  class="text-danger small">
+            </span>
+
+        </div>
+
+        <!-- Email -->
+        <div class="form-floating mb-3">
+
+            <input asp-for="Email"
+                   class="form-control"
+                   placeholder="name@example.com"
+                   autocomplete="email" />
+
+            <label asp-for="Email">
+                <i class="bi bi-envelope me-1"></i>
+                Email
+            </label>
+
+            <span asp-validation-for="Email"
+                  class="text-danger small">
+            </span>
+
+        </div>
+
+        <!-- Password -->
+        <div class="form-floating mb-3 position-relative">
+
+            <input asp-for="Password"
+                   class="form-control"
+                   id="passwordInput"
+                   placeholder="Password"
+                   autocomplete="new-password" />
+
+            <label asp-for="Password">
+                <i class="bi bi-lock me-1"></i>
+                Password
+            </label>
+
+            <button type="button"
+                    class="password-toggle"
+                    onclick="togglePassword('passwordInput', this)"
+                    tabindex="-1">
+
+                <i class="bi bi-eye"></i>
+
+            </button>
+
+            <span asp-validation-for="Password"
+                  class="text-danger small">
+            </span>
+
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="form-floating mb-4 position-relative">
+
+            <input asp-for="ConfirmPassword"
+                   class="form-control"
+                   id="confirmPasswordInput"
+                   placeholder="Confirm Password"
+                   autocomplete="new-password" />
+
+            <label asp-for="ConfirmPassword">
+                <i class="bi bi-lock-fill me-1"></i>
+                Confirm Password
+            </label>
+
+            <button type="button"
+                    class="password-toggle"
+                    onclick="togglePassword('confirmPasswordInput', this)"
+                    tabindex="-1">
+
+                <i class="bi bi-eye"></i>
+
+            </button>
+
+            <span asp-validation-for="ConfirmPassword"
+                  class="text-danger small">
+            </span>
+
+        </div>
+
+        <!-- Submit -->
+        <button type="submit"
+                class="btn btn-auth w-100">
+
+            <i class="bi bi-person-plus me-2"></i>
+
+            Create Account
+
+        </button>
+
+    </form>
+
+    <!-- Footer -->
+    <div class="auth-footer">
+
+        <p class="text-muted mb-0">
+
+            Already have an account?
+
+            <a asp-action="Login"
+               asp-route-returnUrl="@ViewData["ReturnUrl"]"
+               class="auth-link fw-semibold">
+
+                Sign In
+
+            </a>
+
+        </p>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
