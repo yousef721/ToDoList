@@ -10,6 +10,7 @@ publish/
 # Visual Studio / Rider
 # =========================
 .vs/
+.vscode/
 *.user
 *.suo
 *.userosscache
@@ -46,4 +47,4 @@ Thumbs.db
 # Optional local static libs
 # =========================
 **/wwwroot/lib/
-.vscode/
+
